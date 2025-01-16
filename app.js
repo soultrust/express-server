@@ -1,61 +1,83 @@
 const express = require("express");
+
 const app = express();
-const port = process.env.PORT || 3001;
 
-app.get("/", (req, res) => res.type('html').send(html));
+app.use(express.json());
 
-const server = app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+let currentUser = {
+  name: "Sarah Waters",
+  age: 55,
+  country: "United Kingdom",
+  books: ["Fingersmith", "The Night Watch"],
+};
 
-server.keepAliveTimeout = 120 * 1000;
-server.headersTimeout = 120 * 1000;
+let users = [
+  {
+    name: "Sarah Waters",
+    age: 55,
+    country: "United Kingdom",
+    books: ["Fingersmith", "The Night Watch"],
+  },
+  {
+    name: "Haruki Murakami",
+    age: 71,
+    country: "Japan",
+    books: ["Norwegian Wood", "Kafka on the Shore"],
+  },
+  {
+    name: "Chimamanda Ngozi Adichie",
+    age: 43,
+    country: "Nigeria",
+    books: ["Half of a Yellow Sun", "Americanah"],
+  },
+];
 
-const html = `
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Hello from Render!</title>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
-    <script>
-      setTimeout(() => {
-        confetti({
-          particleCount: 100,
-          spread: 70,
-          origin: { y: 0.6 },
-          disableForReducedMotion: true
-        });
-      }, 500);
-    </script>
-    <style>
-      @import url("https://p.typekit.net/p.css?s=1&k=vnd5zic&ht=tk&f=39475.39476.39477.39478.39479.39480.39481.39482&a=18673890&app=typekit&e=css");
-      @font-face {
-        font-family: "neo-sans";
-        src: url("https://use.typekit.net/af/00ac0a/00000000000000003b9b2033/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3") format("woff2"), url("https://use.typekit.net/af/00ac0a/00000000000000003b9b2033/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3") format("woff"), url("https://use.typekit.net/af/00ac0a/00000000000000003b9b2033/27/a?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3") format("opentype");
-        font-style: normal;
-        font-weight: 700;
-      }
-      html {
-        font-family: neo-sans;
-        font-weight: 700;
-        font-size: calc(62rem / 16);
-      }
-      body {
-        background: white;
-      }
-      section {
-        border-radius: 1em;
-        padding: 1em;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        margin-right: -50%;
-        transform: translate(-50%, -50%);
-      }
-    </style>
-  </head>
-  <body>
-    <section>
-      Hello from Render!
-    </section>
-  </body>
-</html>
-`
+let books = [
+  {
+    name: "To Kill a Mockingbird",
+    pages: 281,
+    title: "Harper Lee",
+    price: 12.99,
+  },
+  {
+    name: "The Catcher in the Rye",
+    pages: 224,
+    title: "J.D. Salinger",
+    price: 9.99,
+  },
+  {
+    name: "The Little Prince",
+    pages: 85,
+    title: "Antoine de Saint-Exupéry",
+    price: 7.99,
+  },
+];
+
+app.get("/current-user", (req, res) => res.json(currentUser));
+
+app.get("/users/:id", (req, res) => {
+  const { id } = req.params;
+  console.log(id);
+  res.json(users.find((user) => user.id === id));
+});
+
+app.get("/users", (req, res) => res.json(users));
+
+app.post("/users/:id", (req, res) => {
+  const { id } = req.params;
+  const { user: editedUser } = req.body;
+
+  users = users.map((user) => (user.id === id ? editedUser : user));
+
+  res.json(users.find((user) => user.id === id));
+});
+
+app.get("/books", (req, res) => res.json(books));
+
+app.get("/books/:id", (req, res) => {
+  const { id } = req.params;
+  res.json(books.find((book) => book.id === id));
+});
+
+let SERVER_PORT = 9090;
+app.listen(SERVER_PORT, () => console.log(`Server is listening on port: ${SERVER_PORT}`));
